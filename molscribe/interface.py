@@ -150,8 +150,13 @@ class MolScribe:
 
     def predict_image_files(self, image_files: List, return_atoms_bonds=False, return_confidence=False):
         input_images = []
-        for path in image_files:
-            image = cv2.imread(path)
+        for img_data in image_files:
+            if isinstance(img_data, str):
+                image = cv2.imread(img_data)
+            else:
+                nparr = np.frombuffer(img_data, np.uint8)
+                image = cv2.imdecode(nparr, cv2.IMREAD_COLOR)
+            
             image = cv2.cvtColor(image, cv2.COLOR_BGR2RGB)
             input_images.append(image)
         return self.predict_images(
